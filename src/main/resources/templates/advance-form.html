@@ -1,0 +1,32 @@
+<html>
+<head>
+<style>
+table{border-style:solid;
+.even{background-color:red;}
+.odd{background-color:green;}
+}
+</style>
+</head>
+<body>
+	<table>
+		<tr><td>table 1 - iterate list</td></tr>
+		<tr th:each="user,userstatus : ${users1}" th:class="${userstatus.even}?'even':'odd'">
+			<td th:text="${user.name}"></td>
+		</tr>
+	</table>
+	<br/>
+	<table>
+		<tr><td>table 2 - iterate map</td></tr>
+		<tr th:each="entry : ${users2}">
+			<td th:text="${entry.value.name}"></td>
+		</tr>
+	</table>
+	<br/>
+	<table>
+		<tr><td>table 3 - iterate array</td></tr>
+		<tr th:each="user : ${users3}">
+			<td th:text="${user.name}"></td>
+		</tr>
+	</table>
+</body>
+</html>
