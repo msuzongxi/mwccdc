@@ -1,0 +1,112 @@
+<html layout:decorate="~{/layout/bootstrap}">
+
+<head>
+<title>boostrap point</title>
+</head>
+
+<div layout:fragment="content">
+	<div class="w-100 bg-success fs-4 text-center"><span id="msg"></span></div>
+	<table class="table table-hover">
+		<thead>
+		<tr><th>User Name</th><th>Task Name</th><th>Task Type</th><th>Score</th>
+		<th>Remark</th><th>Date</th><th>Desc</th></tr>
+		
+		</thead>
+		<tbody>
+
+		<tr th:each="ccdcpointview: ${ccdcpointviews}">
+		<td><div class="row_data" col_name="uName" th:attr="col_val=${ccdcpointview.uName}" th:text="${ccdcpointview.uName}"></div></td>
+		<td><div class="row_data" col_name="tName" th:attr="col_val=${ccdcpointview.tName}" th:text="${ccdcpointview.tName}"></div></td>
+		<td><div class="row_data" col_name="tType" th:attr="col_val=${ccdcpointview.tType}" th:text="${ccdcpointview.tType}"></div></td>
+		<td><div class="row_data" col_name="score" th:attr="col_val=${ccdcpointview.score}" th:text="${ccdcpointview.score}"></div></td>
+		<td><div class="row_data" col_name="remark" th:attr="col_val=${ccdcpointview.remark}" th:text="${ccdcpointview.remark}"></div></td>
+		<td><div class="row_data" col_name="tDate" th:attr="col_val=${ccdcpointview.tDate}" th:text="${ccdcpointview.tDate}"></div></td>
+		<td><div class="row_data" col_name="tDesc" th:attr="col_val=${ccdcpointview.tDesc}" th:text="${ccdcpointview.tDesc}"></div></td>
+		
+		</tr>
+
+		</tbody>
+	
+	</table>
+	<div id="btn_save" class="w-100 text-center bg-info"><a class="btn text-white">SAVE</a></div>
+	
+	<script type="text/javascript">
+		$(document).ready(function($){
+			$(document).on("click", ".row_data", function(event){
+				event.preventDefault(); //terminate the clicking action
+				var ele = $(this);
+				if(ele.attr("col_name") != "score" && ele.attr("col_name") != "remark"){
+					return false;
+				} 
+				
+				ele.attr("contenteditable", "true");
+				ele.addClass("bg-warning");
+				ele.focus();
+			});
+			
+			
+			$(document).on("focusout", ".row_data", function(event){
+				var ele = $(this);
+				if(ele.attr("col_val") == ele.html()){
+					ele.removeClass("bg-warning");
+				}
+			});
+			
+			$(document).on("click", "#btn_save", function(event){
+				var dataArray = [];
+				var scoreMap = new Map();
+				$(".bg-warning").each(function(){
+					var ele = $(this);
+					var trEle = ele.closest("tr");
+					var uname = trEle.find("div[col_name=uName]").html();
+					var tname = trEle.find("div[col_name=tName]").html();
+					var score = trEle.find("div[col_name=score]").html();
+					var remark = trEle.find("div[col_name=remark]").html();
+					if(!scoreMap.has(uname+tname)){
+						dataArray.push({"uName":uname, "tName":tname, "score":score, "remark":remark});
+						scoreMap.set(uname+tname, "Y");
+					}
+				});
+				
+				if(dataArray.length == 0){
+					return;
+				}
+				
+				var jsonData = JSON.stringify(dataArray);
+				console.log(jsonData);
+				
+				//callback functions
+				$.ajax({
+					url:"/api/savepoints",
+					type:"POST",
+					contentType:"application/json",
+					data:jsonData,
+					success:function(response){
+						$('#msg').text("sucess").show().fadeOut(2000);
+						$(".bg-warning").each(function(){
+							var ele = $(this);
+							ele.removeClass("bg-warning");
+						});
+							
+						
+					},
+					error:function(xhr, status, error){
+						console.log(status);
+						$('#msg').text("failed").show().fadeOut(2000);
+					}
+				})
+			
+				
+			});
+			
+			
+		});
+	
+	
+	
+	</script>
+	
+	
+</div>
+
+</html>
