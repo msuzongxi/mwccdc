@@ -66,11 +66,6 @@
             <version>2.16.2</version>
         </dependency>
 
-        <dependency>
-        	<groupId>com.itccloud</groupId>
-        	<artifactId>mwccdctest</artifactId>
-        	<version>0.0.1-SNAPSHOT</version>
-        </dependency>
 	</dependencies>
 	
 	<build>
